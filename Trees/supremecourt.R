@@ -2,7 +2,7 @@
 #dep = vote to reverse, 0 = affirm, 1 = reverse
 stevens <- read.csv("~/Documents/analytics-with-R/Trees/stevens.csv")
 library(caTools)
-set.seed(100)
+set.seed(200)
 spl = sample.split(stevens$Reverse, 0.7)
 train = subset(stevens, spl==TRUE)
 test = subset(stevens, spl==FALSE)
@@ -34,4 +34,20 @@ train$Reverse = as.factor(train$Reverse)
 test$Reverse = as.factor(test$Reverse)
 predictForest = predict(stevensForest, newdata=test)
 table(test$Reverse, predictForest)
-accuracyforest = (41+74)/(41+36+19+74)
+accuracyforest = (39+73)/(42+35+16+77)
+
+#while using trees, how do we determine the optiminal minbucket value?
+#k fold cross validation
+library(caret)
+library(e1071)
+numFolds = trainControl(method = "cv", number =10)
+#numbers from 0.01 to 0.5 in increments of 0.01
+cpGrid = expand.grid(.cp = seq(0.01,0.5,0.01))
+train(Reverse~Circuit + Issue + Petitioner + Respondent + LowerCourt + Unconst, data = train,
+      method="rpart", trControl=numFolds, tuneGrid = cpGrid)
+#The final value used for the model was cp = 0.21
+stevensTreeCV=rpart(Reverse ~ Circuit + Issue + Petitioner + Respondent + LowerCourt + Unconst, data = train,
+                  method = "class", cp = 0.18)
+predictCV = predict(stevensTreeCV, newdata=test, type ="class")
+table(test$Reverse, predictCV)
+prp(stevensTreeCV)
