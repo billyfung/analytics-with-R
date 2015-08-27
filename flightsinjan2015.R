@@ -14,6 +14,11 @@ cancelled <- subset(jan2015flights, CANCELLED == 1)
 sort(table(cancelled$ORIGIN))
 #we can see that most cancelled flight originated from ORD, LGA, EWR, BOS, DFW
 m <- ggplot(jan2015flights, aes(x=ORIGIN))
-m + geom_histogram(aes(y = ..count..),colour="black", fill="white")+theme(axis.ticks = element_blank(),axis.text.x = element_blank())
+m + geom_histogram(aes(y = ..count..))+theme(axis.ticks = element_blank(),axis.text.x = element_blank())+
+  ggtitle("Number of flights per airport")
 
 qplot(ORIGIN, data=jan2015flights, geom="histogram")
+jan2015flights <- within(jan2015flights, 
+       ORIGIN <- factor(ORIGIN, 
+                          levels=names(sort(table(ORIGIN), 
+                                            decreasing=TRUE))))
