@@ -24,8 +24,7 @@ d2 <- jan2015flights %>%
   top_n(10) %>%
   arrange(n, ORIGIN) 
 
-d <- ggplot(aes(x = ORIGIN) +
-  geom_bar()
+qplot(ORIGIN,n, data = d2)
   
   
 qplot(ORIGIN, data=jan2015flights, geom="histogram")
